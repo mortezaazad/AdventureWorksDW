@@ -64,5 +64,15 @@ namespace Portal.Web.Controllers
             var q = _db.DimSalesTerritories.FromSqlRaw("Select * from DimSalesTerritory");
             return Ok(q.ToList());
         }
+
+        [Route("sales/territory/count")]
+        public IActionResult TerritoryCount()
+        {
+            var q=_db.FactResellerSales
+                .GroupBy(s=>s.SalesTerritoryKey)
+                .Select(g=>new {g.Key, count=g.Count() })
+                .OrderBy(g=>g.Key);
+            return Ok(q);
+        }
     }
 }
