@@ -103,5 +103,40 @@ namespace Portal.Web.Controllers
             //var c = _db.DimCustomers.Single(c => c.CustomerKey == id);
             return Ok(customer6);
         }
+
+        bool IsLeapYear(int year)
+        { return year % 4 == 0;}
+
+        [Route("api/customer/takeLeap")]
+        public IActionResult GetTakeLeapYear(int id)
+        {
+            //در صورتی که تابع رو بصورت زیر بنویسیم در زمان اجرا به خطا میرسیم . چون نمیتواند تابع
+            //IsLeapYear رو به دستورات SQL تبدیل کنه
+            //به همین خاطر از دستورات زیر میتوانیم استفاده کنیم.
+            // 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'
+            // این توابع ابتدا کل اطلاعات رو از اس کیو ال واکشی می کنند، سپس روی آن دیتا کوئری می زنه
+
+            //var customer = _db.DimCustomers
+            //    .Where(c=>c.BirthDate.HasValue && IsLeapYear(c.BirthDate.Value.Year))
+            //    .OrderBy(g => g.BirthDate)
+            //    .Take(10);
+            //    
+
+
+            // به صورت زیر تغییر می دهیم تا بتوانیم نتیجه رو دریافت کنیم
+            var customer = _db.DimCustomers
+                .AsEnumerable()
+                .Where(c => c.BirthDate.HasValue && IsLeapYear(c.BirthDate.Value.Year))
+                .OrderBy(g => g.BirthDate)
+                .Take(10);
+
+            //AsEnumerable() =>  دیتا خط به خطا از اس کیو ال گرفته می شه و شرط درون برنامه روی آن اجرا می شه. حافظه کمتری مورد نیاز است
+            //ToList() =>  ابتدا کل اطلاعات از اس کیو ال واکشی میشه و در رم قرار می گیره، سپس شرط درون برنامه روی آن اجرا می شود. برای دیتای بزرگ نیاز به رم زیاد داره و توصیه نمی شود.
+
+
+
+
+            return Ok(customer);
+        }
     }
 }
